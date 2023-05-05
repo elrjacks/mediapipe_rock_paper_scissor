@@ -41,6 +41,7 @@ p1_move = None
 p2_move = None
 text = ""
 success = True
+computer_ind = False
 
 with mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands:
     while True:
@@ -72,21 +73,27 @@ with mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5) a
             if player_hands and len(player_hands) == 2:
                 p1_move = getPlayersHandMove(player_hands[0])
                 p2_move = getPlayersHandMove(player_hands[1])
+                computer_ind = False
             #one player - have computer choose as player 2
             elif player_hands and len(player_hands) == 1:
                p1_move = getPlayersHandMove(player_hands[0])
                p2_move = getComputerHandMove()
-            #else - something went wrong
+               computer_ind = True
+            #else - something went wrong no hands to detect!
             else:
                 success = False
         elif clock < 150:
             if success:
-                text = f"Player 1 played {p1_move}, Player 2 played {p2_move}"
+                if computer_ind: text = f"Player 1 played {p1_move}, Computer played {p2_move}"
+                else: text = f"Player 1 played {p1_move}, Player 2 played {p2_move}"
+
                 if p1_move == p2_move: text = f"{text} Tie!"
                 elif p1_move == "rock" and p2_move == "scissor": text = f"{text} Player 1 wins!"
                 elif p1_move == "paper" and p2_move == "rock": text = f"{text} Player 1 wins!"
                 elif p1_move == "scissor" and p2_move == "paper": text = f"{text} Player 1 wins!"
-                else: text = f"{text} Player 2 wins!"
+                else:
+                    if computer_ind: text = f"{text} Computer wins!"
+                    else: text = f"{text} Player 2 wins!"
             else:
                 text = "Uh-Oh - there was an issue!"
 
